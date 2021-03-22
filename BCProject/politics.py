@@ -2,14 +2,14 @@ import numpy as np
 import moderngl
 from window import Window
 
-def grid(size, vert, steps, lines):
+def grid(size, vert, steps, lines, vertStep):
     u = np.linspace(-size, size, steps)
     v = np.repeat(vert,steps)
 
     for x in range(lines-1):
         u = np.append(u,u)
-        v = np.append(v,np.repeat(vert-0.1,steps))
-        vert = vert - 0.1
+        v = np.append(v,np.repeat(vert-vertStep,steps))
+        vert = vert - vertStep
        
     out = np.array(list(zip(u,v))).flatten()
     return out
@@ -26,7 +26,7 @@ class Politics(Window):
     title = "Poslanecká sněmovna ČR"
     gl_version = (3, 3)
     gridx = 0.5
-    gridy = 0.8
+    gridy = 0.1
 
 
     def __init__(self, **kwargs):
@@ -142,7 +142,7 @@ class Politics(Window):
         self.size.value = 20
 
         self.gridx = 0.5
-        self.gridy = 0.8
+        self.gridy = 0.1
 
 
         self.seats.value = calculateCumulative([78,23,22,19,15,14,10,7,6,6])
@@ -166,14 +166,14 @@ class Politics(Window):
     def changeGrid(self,bigger: bool, horiz : bool):
         if (horiz):
             if (bigger):
-                self.gridx = self.gridx + 0.025
+                self.gridx = self.gridx + 0.01
             else:
-                self.gridx = self.gridx - 0.025
+                self.gridx = self.gridx - 0.01
         else:
             if (bigger):
-                self.gridy = self.gridy + 0.025
+                self.gridy = self.gridy + 0.001
             else:
-                self.gridy = self.gridy - 0.025
+                self.gridy = self.gridy - 0.001
             
     def control(self):
         if self.states.get(self.wnd.keys.UP):
@@ -205,7 +205,7 @@ class Politics(Window):
 
         self.control()
 
-        self.vbo = self.ctx.buffer(grid(self.gridx, 0.8, 20, 10).astype('f4'))
+        self.vbo = self.ctx.buffer(grid(self.gridx, 0.8, 20, 10, self.gridy).astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'in_vert')
 
         self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE)
