@@ -25,6 +25,8 @@ def calculateCumulative(seats):
 class Politics(Window):
     title = "Poslanecká sněmovna ČR"
     gl_version = (3, 3)
+    gridx = 0.5
+    gridy = 0.8
 
 
     def __init__(self, **kwargs):
@@ -139,14 +141,19 @@ class Politics(Window):
         self.size = self.prog['size']
         self.size.value = 20
 
-        self.vbo = self.ctx.buffer(grid(0.5, 0.8, 20, 10).astype('f4'))
-        self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'in_vert')
+        self.gridx = 0.5
+        self.gridy = 0.8
+
 
         self.seats.value = calculateCumulative([78,23,22,19,15,14,10,7,6,6])
 
         self.states = {
             self.wnd.keys.UP: False,   
             self.wnd.keys.DOWN: False,  
+            self.wnd.keys.W: False,   
+            self.wnd.keys.S: False,  
+            self.wnd.keys.A: False,   
+            self.wnd.keys.D: False,  
         }
 
     def changeSize(self,bigger: bool):
@@ -154,12 +161,33 @@ class Politics(Window):
             self.size.value = self.size.value + 1
         else:
             self.size.value = self.size.value - 1
+
+
+    def changeGrid(self,bigger: bool, horiz : bool):
+        if (horiz):
+            if (bigger):
+                self.gridx = self.gridx + 0.025
+            else:
+                self.gridx = self.gridx - 0.025
+        else:
+            if (bigger):
+                self.gridy = self.gridy + 0.025
+            else:
+                self.gridy = self.gridy - 0.025
             
     def control(self):
         if self.states.get(self.wnd.keys.UP):
             self.changeSize(True)
         if self.states.get(self.wnd.keys.DOWN):
             self.changeSize(False)
+        if self.states.get(self.wnd.keys.W):
+            self.changeGrid(bigger=True,horiz=False)
+        if self.states.get(self.wnd.keys.S):
+            self.changeGrid(bigger=False,horiz=False)
+        if self.states.get(self.wnd.keys.A):
+            self.changeGrid(bigger=True,horiz=True)
+        if self.states.get(self.wnd.keys.D):
+            self.changeGrid(bigger=False,horiz=True)
 
     def key_event(self, key, action, modifiers):
         if key not in self.states:
@@ -176,6 +204,9 @@ class Politics(Window):
     def render(self, time: float, frame_time: float):
 
         self.control()
+
+        self.vbo = self.ctx.buffer(grid(self.gridx, 0.8, 20, 10).astype('f4'))
+        self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'in_vert')
 
         self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE)
         back = (0.2, 0.2, 0.2)
