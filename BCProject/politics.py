@@ -97,7 +97,7 @@ class Politics(Window):
                 vec3 pir = vec3(0,0,0);
                 vec3 spd = vec3(97,75,3);
                 vec3 ksc = vec3(255,0,0);
-                vec3 csd = vec3(255,166,0);
+                vec3 csd = vec3(255,123,0);
                 vec3 kdu = vec3(255,255,0);
                 vec3 top = vec3(136,0,255);
                 vec3 stn = vec3(0,158,18);
