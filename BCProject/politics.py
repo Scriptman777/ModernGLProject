@@ -37,6 +37,7 @@ class Politics(Window):
                 in vec2 in_vert;
 
                 uniform int inSeats[10];
+                uniform int size;
 
                 flat out int colIndex;
 
@@ -46,7 +47,7 @@ class Politics(Window):
 
                 void main() {
                     gl_Position = vec4(in_vert,0.0,1.0);
-                    gl_PointSize = 20;
+                    gl_PointSize = size;
                     
                     if (gl_VertexID < inSeats[0]) {
                         colIndex = 0;
@@ -135,14 +136,46 @@ class Politics(Window):
 
         self.seats = self.prog['inSeats']
         self.back = self.prog['back']
+        self.size = self.prog['size']
+        self.size.value = 20
 
         self.vbo = self.ctx.buffer(grid(0.5, 0.8, 20, 10).astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'in_vert')
 
         self.seats.value = calculateCumulative([78,23,22,19,15,14,10,7,6,6])
 
+        self.states = {
+            self.wnd.keys.UP: False,   
+            self.wnd.keys.DOWN: False,  
+        }
+
+    def changeSize(self,bigger: bool):
+        if (bigger):
+            self.size.value = self.size.value + 1
+        else:
+            self.size.value = self.size.value - 1
+            
+    def control(self):
+        if self.states.get(self.wnd.keys.UP):
+            self.changeSize(True)
+        if self.states.get(self.wnd.keys.DOWN):
+            self.changeSize(False)
+
+    def key_event(self, key, action, modifiers):
+        if key not in self.states:
+            print(key, action)
+            return
+
+        if action == self.wnd.keys.ACTION_PRESS:
+            self.states[key] = True
+        else:
+            self.states[key] = False
+
+
 
     def render(self, time: float, frame_time: float):
+
+        self.control()
 
         self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE)
         back = (0.2, 0.2, 0.2)
