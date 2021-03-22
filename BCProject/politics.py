@@ -145,7 +145,7 @@ class Politics(Window):
     def render(self, time: float, frame_time: float):
 
         self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE)
-        back = (0.5, 0.5, 0.5)
+        back = (0.2, 0.2, 0.2)
         self.back.value = back
         self.ctx.clear(back[0],back[1],back[2])
         self.vao.render(mode=moderngl.POINTS)
