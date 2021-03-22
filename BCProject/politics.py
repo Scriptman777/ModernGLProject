@@ -10,11 +10,17 @@ def grid(size, vert, steps, lines):
         u = np.append(u,u)
         v = np.append(v,np.repeat(vert-0.1,steps))
         vert = vert - 0.1
-        
-
+       
     out = np.array(list(zip(u,v))).flatten()
-
     return out
+
+def calculateCumulative(seats):
+    cumulativeSeats = [seats[0]]
+    temp = seats[0]
+    for x in range(1,len(seats)):
+        temp = temp + seats[x]
+        cumulativeSeats.append(temp)
+    return cumulativeSeats
 
 class Politics(Window):
     title = "Poslanecká sněmovna ČR"
@@ -45,31 +51,31 @@ class Politics(Window):
                     if (gl_VertexID < inSeats[0]) {
                         colIndex = 0;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]) {
+                    else if (gl_VertexID < inSeats[1]) {
                         colIndex = 1;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]+inSeats[2]) {
+                    else if (gl_VertexID < inSeats[2]) {
                         colIndex = 2;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]+inSeats[2]+inSeats[3]) {
+                    else if (gl_VertexID < inSeats[3]) {
                         colIndex = 3;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]+inSeats[2]+inSeats[3]+inSeats[4]) {
+                    else if (gl_VertexID < inSeats[4]) {
                         colIndex = 4;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]+inSeats[2]+inSeats[3]+inSeats[4]+inSeats[5]) {
+                    else if (gl_VertexID < inSeats[5]) {
                         colIndex = 5;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]+inSeats[2]+inSeats[3]+inSeats[4]+inSeats[5]+inSeats[6]) {
+                    else if (gl_VertexID < inSeats[6]) {
                         colIndex = 6;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]+inSeats[2]+inSeats[3]+inSeats[4]+inSeats[5]+inSeats[6]+inSeats[7]) {
+                    else if (gl_VertexID < inSeats[7]) {
                         colIndex = 7;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]+inSeats[2]+inSeats[3]+inSeats[4]+inSeats[5]+inSeats[6]+inSeats[7]+inSeats[8]) {
+                    else if (gl_VertexID < inSeats[8]) {
                         colIndex = 8;
                     }
-                    else if (gl_VertexID < inSeats[0]+inSeats[1]+inSeats[2]+inSeats[3]+inSeats[4]+inSeats[5]+inSeats[6]+inSeats[7]+inSeats[8]+inSeats[9]) {
+                    else if (gl_VertexID < inSeats[9]) {
                         colIndex = 9;
                     }
                 }
@@ -133,14 +139,18 @@ class Politics(Window):
         self.vbo = self.ctx.buffer(grid(0.5, 0.8, 20, 10).astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'in_vert')
 
+        self.seats.value = calculateCumulative([78,23,22,19,15,14,10,7,6,6])
+
 
     def render(self, time: float, frame_time: float):
-        self.seats.value = [78,23,22,19,15,14,10,7,6,6]
+
         self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE)
         back = (0.5, 0.5, 0.5)
         self.back.value = back
         self.ctx.clear(back[0],back[1],back[2])
         self.vao.render(mode=moderngl.POINTS)
+
+
 
 
 if __name__ == '__main__':
