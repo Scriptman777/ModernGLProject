@@ -1,6 +1,8 @@
 import numpy as np
 import moderngl
-from window import Window
+import imgui
+from UI.window import Window
+from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
 def grid(size, vert, steps, lines, vertStep):
     u = np.linspace(-size, size, steps)
@@ -31,6 +33,9 @@ class Politics(Window):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        imgui.create_context()
+        self.imgui = ModernglWindowRenderer(self.wnd)
 
         self.prog = self.ctx.program(
             vertex_shader='''
@@ -204,6 +209,7 @@ class Politics(Window):
     def render(self, time: float, frame_time: float):
 
         self.control()
+        
 
         self.vbo = self.ctx.buffer(grid(self.gridx, 0.8, 20, 10, self.gridy).astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'in_vert')
@@ -213,6 +219,35 @@ class Politics(Window):
         self.back.value = back
         self.ctx.clear(back[0],back[1],back[2])
         self.vao.render(mode=moderngl.POINTS)
+
+        self.render_ui()
+
+    def render_ui(self):
+        imgui.new_frame()
+
+
+        imgui.begin("Custom window", False)
+        imgui.text("Bar")
+        imgui.text_colored("Eggs", 0.2, 1., 0.)
+        imgui.end()
+
+        imgui.render()
+        self.imgui.render(imgui.get_draw_data())
+
+    def mouse_position_event(self, x, y, dx, dy):
+        self.imgui.mouse_position_event(x, y, dx, dy)
+
+    def mouse_drag_event(self, x, y, dx, dy):
+        self.imgui.mouse_drag_event(x, y, dx, dy)
+
+    def mouse_scroll_event(self, x_offset, y_offset):
+        self.imgui.mouse_scroll_event(x_offset, y_offset)
+
+    def mouse_press_event(self, x, y, button):
+        self.imgui.mouse_press_event(x, y, button)
+
+    def mouse_release_event(self, x: int, y: int, button: int):
+        self.imgui.mouse_release_event(x, y, button)
 
 
 
