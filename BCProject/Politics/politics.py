@@ -27,8 +27,6 @@ def calculateCumulative(seats):
 class Politics(Window):
     title = "Poslanecká sněmovna ČR"
     gl_version = (3, 3)
-    gridx = 0.5
-    gridy = 0.1
 
 
     def __init__(self, **kwargs):
@@ -125,7 +123,6 @@ class Politics(Window):
                     
                     
                     float dist = step(length(gl_PointCoord.xy - vec2(0.5)), 0.5);
-
                     if (dist == 0.0) 
                     {
                         outColor = vec4(back ,1.0);
@@ -134,6 +131,7 @@ class Politics(Window):
                     {
                         outColor = vec4(dist * normColor, dist);
                     }
+         
                     
                 }
 
@@ -144,6 +142,7 @@ class Politics(Window):
         self.seats = self.prog['inSeats']
         self.back = self.prog['back']
         self.size = self.prog['size']
+
         self.size.value = 20
 
         self.gridx = 0.5
@@ -162,6 +161,12 @@ class Politics(Window):
         }
 
     def changeSize(self,bigger: bool):
+        if (bigger):
+            self.size.value = self.size.value + 1
+        else:
+            self.size.value = self.size.value - 1
+
+    def changePointShape(self):
         if (bigger):
             self.size.value = self.size.value + 1
         else:
@@ -226,10 +231,29 @@ class Politics(Window):
         imgui.new_frame()
 
 
-        imgui.begin("Custom window", False)
-        imgui.text("Bar")
-        imgui.text_colored("Eggs", 0.2, 1., 0.)
+        imgui.begin("Description", False)
+        imgui.text("Visualisation of the number of mandates held by different political parties")
+        imgui.text("Parties:")
+        imgui.text_colored("ANO", 0 ,1 ,251/ 255)
+        imgui.text_colored("ODS", 0,0,1)
+        imgui.text_colored("Pirate party", 0.5,0.5,0.5)
+        imgui.text_colored("SPD", 97/ 255,75/ 255,3/ 255)
+        imgui.text_colored("Communist party", 1,0,0)
+        imgui.text_colored("CSSD", 1,123/ 255,0)
+        imgui.text_colored("KDU-CLS", 1,1,0)
+        imgui.text_colored("TOP 09", 136/ 255,0,1)
+        imgui.text_colored("STAN", 0,158/ 255,18/ 255)
+        imgui.text_colored("Other", 1,1,1)
         imgui.end()
+
+
+        imgui.begin("Controls", False)
+        imgui.text("Press A/D to change size horizontaly")
+        imgui.text("Press W/S to change size vertically")
+        imgui.text("Press UP/DOWN to change size of the points")
+        imgui.end()
+
+
 
         imgui.render()
         self.imgui.render(imgui.get_draw_data())

@@ -25,9 +25,6 @@
     <Compile Include="Politics\politics.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Politics\politicsApp.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="UI\window.py">
       <SubType>Code</SubType>
     </Compile>
