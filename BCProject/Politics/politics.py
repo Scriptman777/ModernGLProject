@@ -92,6 +92,7 @@ class Politics(Window):
                 flat in int colIndex;
 
                 uniform vec3 back;
+                uniform bool round;
 
                 out vec4 outColor;
 
@@ -120,17 +121,27 @@ class Politics(Window):
 
 
                     vec3 normColor = vec3(r,g,b);
-                    
-                    
-                    float dist = step(length(gl_PointCoord.xy - vec2(0.5)), 0.5);
-                    if (dist == 0.0) 
+
+                    if (round)
                     {
-                        outColor = vec4(back ,1.0);
+                        float dist = step(length(gl_PointCoord.xy - vec2(0.5)), 0.5);
+                        if (dist == 0.0) 
+                        {
+                            outColor = vec4(back ,1.0);
+                        }
+                        else 
+                        {
+                            outColor = vec4(dist * normColor, dist);
+                        }
                     }
                     else 
                     {
-                        outColor = vec4(dist * normColor, dist);
+                        outColor = vec4(normColor,1.0);
                     }
+
+                    
+                    
+                    
          
                     
                 }
@@ -142,7 +153,9 @@ class Politics(Window):
         self.seats = self.prog['inSeats']
         self.back = self.prog['back']
         self.size = self.prog['size']
+        self.round = self.prog['round']
 
+        self.round.value = True
         self.size.value = 20
 
         self.gridx = 0.5
@@ -158,6 +171,7 @@ class Politics(Window):
             self.wnd.keys.S: False,  
             self.wnd.keys.A: False,   
             self.wnd.keys.D: False,  
+            self.wnd.keys.P: False,  
         }
 
     def changeSize(self,bigger: bool):
@@ -167,10 +181,8 @@ class Politics(Window):
             self.size.value = self.size.value - 1
 
     def changePointShape(self):
-        if (bigger):
-            self.size.value = self.size.value + 1
-        else:
-            self.size.value = self.size.value - 1
+        self.round.value = not self.round.value
+
 
 
     def changeGrid(self,bigger: bool, horiz : bool):
@@ -198,6 +210,8 @@ class Politics(Window):
             self.changeGrid(bigger=True,horiz=True)
         if self.states.get(self.wnd.keys.D):
             self.changeGrid(bigger=False,horiz=True)
+        if self.states.get(self.wnd.keys.P):
+            self.changePointShape()
 
     def key_event(self, key, action, modifiers):
         if key not in self.states:
@@ -231,7 +245,7 @@ class Politics(Window):
         imgui.new_frame()
 
 
-        imgui.begin("Description", False)
+        imgui.begin("Description - Political parties", False)
         imgui.text("Visualisation of the number of mandates held by different political parties")
         imgui.text("Parties:")
         imgui.text_colored("ANO", 0 ,1 ,251/ 255)
