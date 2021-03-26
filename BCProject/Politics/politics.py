@@ -171,7 +171,6 @@ class Politics(Window):
             self.wnd.keys.S: False,  
             self.wnd.keys.A: False,   
             self.wnd.keys.D: False,  
-            self.wnd.keys.P: False,  
         }
 
     def changeSize(self,bigger: bool):
@@ -210,12 +209,11 @@ class Politics(Window):
             self.changeGrid(bigger=True,horiz=True)
         if self.states.get(self.wnd.keys.D):
             self.changeGrid(bigger=False,horiz=True)
-        if self.states.get(self.wnd.keys.P):
-            self.changePointShape()
 
     def key_event(self, key, action, modifiers):
         if key not in self.states:
-            print(key, action)
+            if key == self.wnd.keys.P and action == self.wnd.keys.ACTION_PRESS:
+                self.changePointShape()
             return
 
         if action == self.wnd.keys.ACTION_PRESS:
@@ -228,7 +226,6 @@ class Politics(Window):
     def render(self, time: float, frame_time: float):
 
         self.control()
-        
 
         self.vbo = self.ctx.buffer(grid(self.gridx, 0.8, 20, 10, self.gridy).astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'in_vert')

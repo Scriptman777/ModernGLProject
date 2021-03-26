@@ -69,10 +69,12 @@ class Water(Window):
         )
 
         vertices = np.array([
-            0.0, 0.8, 
-            0.0, -0.8, 
-            0.4, 0.8,
-            0.4, -0.8, 
+            -0.8, 0.8, 
+            -0.8, -0.8, 
+            -0.7, 0.7,
+            -0.7, -0.8, 
+            -0.6, 0.75,
+            -0.6, -0.8,
         ], dtype='f4')
 
         self.graph = self.prog['graph']
@@ -94,7 +96,7 @@ class Water(Window):
         self.graph.value = False
         self.vao_grid.render(moderngl.LINES)
         self.graph.value = True
-        self.vao_graph.render(moderngl.TRIANGLES)
+        self.vao_graph.render(moderngl.TRIANGLE_STRIP)
 
         self.render_ui()
 
