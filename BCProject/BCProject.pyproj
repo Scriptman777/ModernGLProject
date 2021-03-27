@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>cf880ab0-0fad-482a-a593-75cf30996042</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Politics\politics.py</StartupFile>
+    <StartupFile>Water\water.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
