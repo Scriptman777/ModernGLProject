@@ -155,6 +155,8 @@ class Politics(Window):
         self.size = self.prog['size']
         self.round = self.prog['round']
 
+
+
         self.round.value = True
         self.size.value = 20
 
@@ -258,7 +260,7 @@ class Politics(Window):
         imgui.end()
 
 
-        imgui.begin("Controls", False)
+        imgui.begin("Controls - Political parties", False)
         imgui.text("Press A/D to change size horizontaly")
         imgui.text("Press W/S to change size vertically")
         imgui.text("Press UP/DOWN to change size of the points")

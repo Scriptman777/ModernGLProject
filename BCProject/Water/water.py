@@ -56,9 +56,6 @@ def dataInit(data):
     return out
 
 
-
-
-
 class Water(Window):
     title = "Water"
     gl_version = (3, 3)
@@ -85,13 +82,19 @@ class Water(Window):
             fragment_shader='''
                 #version 330
 
-                in vec4 gl_FragCoord;
-
                 out vec4 outColor;
 
                 uniform bool graph;
-                
+                uniform bool opac;
+
                 void main() {
+
+                    float op = 1;
+
+                    if (opac) 
+                    {
+                    op = 0.5;
+                    }
 
 
                     if (graph) 
@@ -99,7 +102,7 @@ class Water(Window):
                         vec2 res = vec2(1280,720);
                         vec2 coord = (gl_FragCoord.xy/res)-0.1;
                         
-                        outColor = vec4(coord.y,coord.y,1.0,1.0);   
+                        outColor = vec4(coord.y,coord.y,1.0,op);   
                     }
                     else
                     {
@@ -114,6 +117,9 @@ class Water(Window):
         )
 
 
+        self.graph = self.prog['graph']
+        self.opac = self.prog['opac']
+
         # Read data from file
         f = open("data/Water_data3.txt", "r")
         line = 0
@@ -122,8 +128,7 @@ class Water(Window):
           data.append(x.split("\t"))
 
 
-        self.graph = self.prog['graph']
-
+        self.opac.value = False
         
         
 
@@ -135,8 +140,6 @@ class Water(Window):
 
     def render(self, time: float, frame_time: float):
 
-
-
         back = (1.0, 1.0, 1.0)
         self.ctx.clear(back[0],back[1],back[2])
         self.graph.value = False
@@ -145,6 +148,8 @@ class Water(Window):
         self.vao_graph.render(moderngl.TRIANGLE_STRIP)
 
         self.render_ui()
+
+
 
     def render_ui(self):
         imgui.new_frame()
@@ -155,6 +160,10 @@ class Water(Window):
         imgui.text("in cubic meters per second")
         imgui.text("Source of data:")
         imgui.text("http://www.pla.cz/portal/sap/")
+        imgui.end()
+
+        imgui.begin("Controls - Water levels", False)
+        imgui.text("Press P to toggle opacity")
         imgui.end()
 
         imgui.render()
@@ -174,6 +183,15 @@ class Water(Window):
 
     def mouse_release_event(self, x: int, y: int, button: int):
         self.imgui.mouse_release_event(x, y, button)
+
+    def key_event(self, key, action, modifiers):
+        if key == self.wnd.keys.P and action == self.wnd.keys.ACTION_PRESS:
+            self.toggleOpacity()
+
+    def toggleOpacity(self):
+        self.opac.value = not self.opac.value
+
+
 
 
 
