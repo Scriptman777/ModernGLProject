@@ -73,7 +73,7 @@ def readData(path):
 
 
 class Water(Window):
-    title = "Water"
+    title = "Water flow graph"
     gl_version = (3, 3)
 
 
@@ -145,6 +145,7 @@ class Water(Window):
 
         back = (1.0, 1.0, 1.0)
         self.ctx.clear(back[0],back[1],back[2])
+
         self.graph.value = False
         self.vao_grid.render(moderngl.LINES)
         self.graph.value = True

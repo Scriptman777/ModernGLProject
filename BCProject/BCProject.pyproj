@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>cf880ab0-0fad-482a-a593-75cf30996042</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Water\water.py</StartupFile>
+    <StartupFile>Heatmap\heatmap.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,7 +22,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BCProject.py" />
+    <Compile Include="Heatmap\heatmap.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Politics\politics.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="template.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\window.py">
@@ -33,6 +39,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Heatmap\" />
     <Folder Include="Water\" />
     <Folder Include="Politics\" />
     <Folder Include="UI\" />

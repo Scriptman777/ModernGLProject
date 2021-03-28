@@ -25,7 +25,7 @@ def calculateCumulative(seats):
     return cumulativeSeats
 
 class Politics(Window):
-    title = "Poslanecká sněmovna ČR"
+    title = "Mandates graph"
     gl_version = (3, 3)
 
 
