@@ -37,6 +37,9 @@ def dataInit(data):
         num = float(x[2].replace(",","."))
         heights.append(num)
 
+    # Order chronologically
+    heights.reverse()
+
     # Find maximum flow 
     max_flow = math.ceil(max(heights))
 
@@ -49,11 +52,24 @@ def dataInit(data):
     step = 1.6/(len(heights)-1)
     out = np.empty(0)
 
+
+
     for x in range(len(heights)):
         out = np.append(out,np.array([round(-0.8+x*step,2),-0.8+norm_heights[x]]))
         out = np.append(out,np.array([round(-0.8+x*step,2),-0.8]))
 
     return out
+
+def readData(path):
+    # Read data from file
+    f = open(path, "r")
+    line = 0
+    data = []
+    for x in f:
+      data.append(x.split("\t"))
+
+    return data
+
 
 
 class Water(Window):
@@ -120,23 +136,10 @@ class Water(Window):
         self.graph = self.prog['graph']
         self.opac = self.prog['opac']
 
-        # Read data from file
-        f = open("data/Water_data3.txt", "r")
-        line = 0
-        data = []
-        for x in f:
-          data.append(x.split("\t"))
-
+        self.setData(3)
 
         self.opac.value = False
         
-        
-
-        self.vbo_grid = self.ctx.buffer(gridInit(0.8,len(data),20).astype('f4'))
-        self.vao_grid = self.ctx.simple_vertex_array(self.prog, self.vbo_grid, 'in_vert')
-
-        self.vbo_graph = self.ctx.buffer(dataInit(data).astype('f4'))   
-        self.vao_graph = self.ctx.simple_vertex_array(self.prog, self.vbo_graph, 'in_vert')
 
     def render(self, time: float, frame_time: float):
 
@@ -152,6 +155,7 @@ class Water(Window):
 
 
     def render_ui(self):
+
         imgui.new_frame()
 
 
@@ -164,6 +168,8 @@ class Water(Window):
 
         imgui.begin("Controls - Water levels", False)
         imgui.text("Press P to toggle opacity")
+        imgui.text("Press 1,2,3,4 to change dataset")
+        imgui.text(self.data_name)
         imgui.end()
 
         imgui.render()
@@ -187,12 +193,43 @@ class Water(Window):
     def key_event(self, key, action, modifiers):
         if key == self.wnd.keys.P and action == self.wnd.keys.ACTION_PRESS:
             self.toggleOpacity()
+        if key == 49 and action == self.wnd.keys.ACTION_PRESS:
+            self.setData(1)
+        if key == 50 and action == self.wnd.keys.ACTION_PRESS:
+            self.setData(2)
+        if key == 51 and action == self.wnd.keys.ACTION_PRESS:
+            self.setData(3)
+        if key == 52 and action == self.wnd.keys.ACTION_PRESS:
+            self.setData(4)
 
     def toggleOpacity(self):
         self.opac.value = not self.opac.value
 
+    def setData(self,data_index):
+        if data_index == 1:
+            data = readData("data/Water_data.txt")
+            self.initVertBuffers(data)
+            self.data_name = "Cidlina"
+        if data_index == 2:
+            data = readData("data/Water_data2.txt")
+            self.initVertBuffers(data)
+            self.data_name = "Doubrava"
+        if data_index == 3:
+            data = readData("data/Water_data3.txt")
+            self.initVertBuffers(data)
+            self.data_name = "Metuje"
+        if data_index == 4:
+            data = readData("data/Water_data4.txt")
+            self.initVertBuffers(data)
+            self.data_name = "Ostravice"
 
 
+    def initVertBuffers(self,data):
+        self.vbo_grid = self.ctx.buffer(gridInit(0.8,len(data),20).astype('f4'))
+        self.vao_grid = self.ctx.simple_vertex_array(self.prog, self.vbo_grid, 'in_vert')
+
+        self.vbo_graph = self.ctx.buffer(dataInit(data).astype('f4'))
+        self.vao_graph = self.ctx.simple_vertex_array(self.prog, self.vbo_graph, 'in_vert')
 
 
 
