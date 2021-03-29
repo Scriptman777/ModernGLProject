@@ -29,7 +29,7 @@ class Heatmap(Window):
                 uniform mat4 Mvp;
 
                 void main() {
-                    gl_PointSize = 3;
+                    gl_PointSize = 5;
                     gradient = (vert.z+1)*0.5;
                     gl_Position = Mvp * vec4(vert, 1.0);
                 }
@@ -85,9 +85,11 @@ class Heatmap(Window):
         if func == 3:
             return math.cos(40*math.sqrt(x**2+y**2))
         if func == 4:
-            return math.e**(1-x**2-y**2) - 1
+            return math.cos(math.fabs(x) + math.fabs(y))
         if func == 5:
             return 8*math.exp(-x**2-y**2)*(0.1+x*(y-0.5))
+        if func == 6:
+            return math.exp(math.sin(x*2)*math.sin(y*0.2))*0.9 * math.exp(math.sin(y*2) * math.sin(x*0.2))*0.9-0.7
 
 
 
@@ -119,7 +121,7 @@ class Heatmap(Window):
 
 
         imgui.begin("Controls - Functions", False)
-        imgui.text("Press 1,2,3,4,5 to change function")
+        imgui.text("Press 1,2,3,4,5,6 to change function")
         imgui.text_colored("Warning:", 1,0,0)
         imgui.text("Depending on your machine, this may take a while")
         imgui.end()
@@ -161,6 +163,9 @@ class Heatmap(Window):
             self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
         if key == 53 and action == self.wnd.keys.ACTION_PRESS:
             self.vbo = self.ctx.buffer(self.initData(5).astype('f4'))
+            self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
+        if key == 54 and action == self.wnd.keys.ACTION_PRESS:
+            self.vbo = self.ctx.buffer(self.initData(6).astype('f4'))
             self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
 
 
