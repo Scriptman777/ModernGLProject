@@ -9,7 +9,7 @@ from util.camera import Camera
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
 class Heatmap(Window):
-    title = "Title"
+    title = "Functions/Heatmaps"
     gl_version = (3, 3)
 
 
@@ -44,7 +44,7 @@ class Heatmap(Window):
 
                 void main() {
 
-                    vec3 colorA = vec3(1.0,0.1,0.1);
+                    vec3 colorA = vec3(0.1,1.0,0);
                     vec3 colorB = vec3(0.0,0.0,1.0);
 
                     vec3 color = mix(colorA,colorB,gradient);
@@ -58,8 +58,6 @@ class Heatmap(Window):
         self.camera._camera_position = Vector3([0.0, 0.0, -20.0])
         self.camera._move_horizontally = 20
         self.camera.build_look_at()
-
-
 
         self.mvp = self.prog['Mvp']
 
@@ -86,9 +84,11 @@ class Heatmap(Window):
         if func == 2:
             return math.cos(x)*math.sin(y)
         if func == 3:
-            return np.sin(np.sqrt(x ** 2 + y ** 2))
+            return math.cos(40*math.sqrt(x**2+y**2))
         if func == 4:
-            return np.sin(np.sqrt(x ** 2 + y ** 2))
+            return math.e**(1-x**2-y**2) - 1
+        if func == 5:
+            return 8*math.exp(-x**2-y**2)*(0.1+x*(y-0.5))
 
 
 
@@ -101,9 +101,7 @@ class Heatmap(Window):
 
         self.mvp.write((self.camera.mat_projection * self.camera.mat_lookat).astype('f4'))
 
-        self.ctx.enable(moderngl.DEPTH_TEST)
-
-        self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE)
+        self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE | moderngl.DEPTH_TEST)
         back = (0.2, 0.2, 0.2)
         self.ctx.clear(back[0],back[1],back[2])
         self.vao.render(mode=moderngl.POINTS)
@@ -114,13 +112,17 @@ class Heatmap(Window):
         imgui.new_frame()
 
 
-        imgui.begin("Description - aaa", False)
-        imgui.text("Lorem ipsum")
+        imgui.begin("Description - Functions", False)
+        imgui.text("This is a visualisation of two variable functions")
+        imgui.text("Points are colored based on their Z coordinate")
+        imgui.text("Same visualisation could be used for heatmaps or simillar data")
         imgui.end()
 
 
-        imgui.begin("Controls - aaa", False)
-        imgui.text("Press A/D to dolor sit amet")
+        imgui.begin("Controls - Functions", False)
+        imgui.text("Press 1,2,3,4,5 to change function")
+        imgui.text_colored("Warning:", 1,0,0)
+        imgui.text("Depending on your machine, this may take a while")
         imgui.end()
 
 
@@ -157,6 +159,9 @@ class Heatmap(Window):
             self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
         if key == 52 and action == self.wnd.keys.ACTION_PRESS:
             self.vbo = self.ctx.buffer(self.initData(4).astype('f4'))
+            self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
+        if key == 53 and action == self.wnd.keys.ACTION_PRESS:
+            self.vbo = self.ctx.buffer(self.initData(5).astype('f4'))
             self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
 
 
