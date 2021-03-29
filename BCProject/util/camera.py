@@ -6,6 +6,7 @@ class Camera():
 
     def __init__(self, ratio):
         self._zoom_step = 0.1
+        self._zoom_step = 0.1
         self._move_vertically = 0.1
         self._move_horizontally = 0.1
         self._rotate_horizontally = 0.1

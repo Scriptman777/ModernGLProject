@@ -2,6 +2,7 @@
 import numpy as np
 import moderngl
 import imgui
+from pyrr import Matrix44, Quaternion, Vector3, vector
 from UI.window import Window
 from util.camera import Camera
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
@@ -28,7 +29,7 @@ class Heatmap(Window):
                 uniform mat4 Mvp;
 
                 void main() {
-                    gl_PointSize = 2;
+                    gl_PointSize = 5;
                     origZ = vert.z;
                     gl_Position = Mvp * vec4(vert, 1.0);
                 }
@@ -41,12 +42,19 @@ class Heatmap(Window):
                 out vec4 color;
                 void main() {
 
-                    color = vec4(origZ, origZ, 1.0, 1.0);
+                    color = vec4(origZ, origZ, 1.0, 0.5);
                 }
             ''',
         )
 
+        # Camera setup
         self.camera = Camera(self.aspect_ratio)
+        self.camera._camera_position = Vector3([0.0, 0.0, -20.0])
+        self.camera._move_horizontally = 20
+        self.camera.build_look_at()
+
+
+
         self.mvp = self.prog['Mvp']
 
         self.vbo = self.ctx.buffer(self.initData().astype('f4'))
@@ -57,17 +65,21 @@ class Heatmap(Window):
     def initData(self):
         x = np.linspace(-8, 8, 200)
         y = np.linspace(-8, 8, 200)
-        z = []
+        out = []
 
         for i in range(len(x)):
             for j in range(len(y)):
-                z = np.append(z,[x[i],y[j],np.sin(np.sqrt(x[i] ** 2 + y[j] ** 2))])
+                out = np.append(out,[x[i],y[j],np.sin(np.sqrt(x[i] ** 2 + y[j] ** 2))])
 
-        return z
+        return out
 
 
 
     def render(self, time: float, frame_time: float):
+
+        self.camera.move_forward()
+        self.camera.rotate_left()
+        self.camera.move_backwards()
 
         self.mvp.write((self.camera.mat_projection * self.camera.mat_lookat).astype('f4'))
 
