@@ -21,6 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="util\camera.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="BCProject.py" />
     <Compile Include="Heatmap\heatmap.py">
       <SubType>Code</SubType>
@@ -40,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Heatmap\" />
+    <Folder Include="util\" />
     <Folder Include="Water\" />
     <Folder Include="Politics\" />
     <Folder Include="UI\" />
