@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>cf880ab0-0fad-482a-a593-75cf30996042</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Heatmap\heatmap.py</StartupFile>
+    <StartupFile>heatmap.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -25,10 +25,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BCProject.py" />
-    <Compile Include="Heatmap\heatmap.py">
+    <Compile Include="heatmap.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Politics\politics.py">
+    <Compile Include="politics.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="template.py">
@@ -37,15 +37,12 @@
     <Compile Include="UI\window.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Water\water.py">
+    <Compile Include="water.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Heatmap\" />
     <Folder Include="util\" />
-    <Folder Include="Water\" />
-    <Folder Include="Politics\" />
     <Folder Include="UI\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
