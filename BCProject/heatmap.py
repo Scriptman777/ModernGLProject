@@ -39,12 +39,12 @@ class Heatmap(Window):
 
                 in float gradient;
 
+                uniform vec3 colorA;
+                uniform vec3 colorB;
+
                 out vec4 outColor;
 
                 void main() {
-
-                    vec3 colorA = vec3(0.1,1.0,0);
-                    vec3 colorB = vec3(0.0,0.0,1.0);
 
                     vec3 color = mix(colorA,colorB,gradient);
                     outColor = vec4(color, 1.0);
@@ -59,6 +59,12 @@ class Heatmap(Window):
         self.camera.build_look_at()
 
         self.mvp = self.prog['Mvp']
+        self.colorA = self.prog['colorA']
+        self.colorB = self.prog['colorB']
+
+        self.colorA.value = (0.1,1.0,0.0)
+        self.colorB.value = (0.0,0.0,1.0)
+        self.colorSelector = 0
 
         self.vbo = self.ctx.buffer(self.initData(1).astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
@@ -121,6 +127,7 @@ class Heatmap(Window):
 
 
         imgui.begin("Controls - Functions", False)
+        imgui.text("UP and DOWN to change colors")
         imgui.text("Press 1,2,3,4,5,6 to change function")
         imgui.text_colored("Warning:", 1,0,0)
         imgui.text("Depending on your machine, this may take a while")
@@ -167,7 +174,30 @@ class Heatmap(Window):
         if key == 54 and action == self.wnd.keys.ACTION_PRESS:
             self.vbo = self.ctx.buffer(self.initData(6).astype('f4'))
             self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
+        if key == self.wnd.keys.UP and action == self.wnd.keys.ACTION_PRESS:
+            self.colorSelect(True)
+        if key == self.wnd.keys.DOWN and action == self.wnd.keys.ACTION_PRESS:
+            self.colorSelect(False)
 
+    def colorSelect(self,up):
+        if up:
+            self.colorSelector = self.colorSelector + 1
+        else:
+            self.colorSelector = self.colorSelector - 1
+
+        if self.colorSelector % 4 == 0:
+            self.colorA.value = (0.1,1.0,0.0)
+            self.colorB.value = (0.0,0.0,1.0)
+        elif self.colorSelector % 4 == 1:
+            self.colorA.value = (1.0,0.5,0.0)
+            self.colorB.value = (0.25,0.0,0.4)
+        elif self.colorSelector % 4 == 2:
+            self.colorA.value = (1.0,1.0,1.0)
+            self.colorB.value = (0.0,0.0,0.0)
+        elif self.colorSelector % 4 == 3:
+            self.colorA.value = (1.0,0.0,0.0)
+            self.colorB.value = (1.0,1.0,0.0)
+        
 
 
 if __name__ == '__main__':
