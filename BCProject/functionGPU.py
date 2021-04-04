@@ -111,21 +111,6 @@ class Heatmap(Window):
         return out
 
 
-    def calcFunc(self,x,y,func):
-        if func == 1:
-            return 
-        if func == 2:
-            return 
-        if func == 3:
-            return 
-        if func == 4:
-            return 
-        if func == 5:
-            return 
-        if func == 6:
-            return 
-
-
 
     def render(self, time: float, frame_time: float):
 
@@ -151,14 +136,14 @@ class Heatmap(Window):
         imgui.text("This is a visualisation of two variable functions")
         imgui.text("Points are colored based on their Z coordinate")
         imgui.text("Same visualisation could be used for heatmaps or simillar data")
+        imgui.text_colored("Warning:", 1,0,0)
+        imgui.text("Depending on your GPU, this may lag")
         imgui.end()
 
 
         imgui.begin("Controls - Functions", False)
         imgui.text("UP and DOWN to change colors")
         imgui.text("Press 1,2,3,4,5,6 to change function")
-        imgui.text_colored("Warning:", 1,0,0)
-        imgui.text("Depending on your machine, this may take a while")
         imgui.end()
 
 
