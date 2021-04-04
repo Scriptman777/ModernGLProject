@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>cf880ab0-0fad-482a-a593-75cf30996042</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>heatmap.py</StartupFile>
+    <StartupFile>functionGPU.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,11 +21,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="functionGPU.py" />
     <Compile Include="util\camera.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BCProject.py" />
-    <Compile Include="heatmap.py">
+    <Compile Include="functionCPU.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="politics.py">
