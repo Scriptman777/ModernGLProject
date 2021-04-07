@@ -1,6 +1,8 @@
 import numpy as np
 import moderngl
 import imgui
+import tkinter as tk
+from tkinter import filedialog
 from UI.window import Window
 from PIL import Image
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
@@ -70,15 +72,27 @@ class Histogram(Window):
             fragment_shader='''
                 #version 330
 
-                out vec4 color;
+                uniform vec2 resolution;
+
+                out vec4 outColor;
                 void main() {
-                    color = vec4(0.3, 0.5, 1.0, 1.0);
+
+                    vec2 coord = (gl_FragCoord.xy/resolution)-0.1;
+                    outColor = vec4(coord.y,coord.y,1.0,1.0); 
                 }
             ''',
         )
 
         self.histo = self.prog['histogram']
-        self.histo.value = self.countPix()
+
+        # Show file dialog
+        root = tk.Tk()
+        root.withdraw()
+        path = filedialog.askopenfilename()
+
+        self.histo.value = self.countPix(path)
+
+        
 
 
         self.vbo = self.ctx.buffer(self.initLines().astype('f4'))
@@ -90,7 +104,7 @@ class Histogram(Window):
     def render(self, time: float, frame_time: float):
 
         self.prog["resolution"] = self.wnd.buffer_size
-        self.prog["width"] = 5.0
+        self.prog["width"] = 3.0
         back = (0.2, 0.2, 0.2)
         self.ctx.clear(back[0],back[1],back[2])
         self.vao.render(mode=moderngl.LINES)
@@ -108,9 +122,9 @@ class Histogram(Window):
         return np.array(list(zip(u,v))).flatten()
        
 
-    def countPix(self):
+    def countPix(self,path):
         hist = np.zeros(256)
-        im = Image.open('data/i8.jpg')
+        im = Image.open(path)
         pix = im.load()
         print(im.size)
         for x in range(im.size[0]):
@@ -121,7 +135,6 @@ class Histogram(Window):
         
         max = np.max(hist)
         hist = hist * (1/max)
-        print(hist)
         return hist.tolist()
 
 
