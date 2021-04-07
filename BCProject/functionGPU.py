@@ -136,8 +136,6 @@ class Heatmap(Window):
         imgui.text("This is a visualisation of two variable functions")
         imgui.text("Points are colored based on their Z coordinate")
         imgui.text("Same visualisation could be used for heatmaps or simillar data")
-        imgui.text_colored("Warning:", 1,0,0)
-        imgui.text("Depending on your GPU, this may lag")
         imgui.end()
 
 
