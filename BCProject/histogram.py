@@ -9,7 +9,7 @@ from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
 
 class Histogram(Window):
-    title = "Title"
+    title = "Histogram"
     gl_version = (3, 3)
 
 
@@ -18,6 +18,34 @@ class Histogram(Window):
 
         imgui.create_context()
         self.imgui = ModernglWindowRenderer(self.wnd)
+
+        self.prog2 = self.ctx.program(
+            vertex_shader='''
+                #version 330
+                in vec2 vert;
+                out vec2 v_text;
+
+                void main() {
+                    gl_Position = vec4(vert, 0.0, 1.0);
+                    v_text = vert.xy*2;
+                }
+            ''',
+            fragment_shader='''
+                #version 330
+
+                in vec2 v_text;
+
+                out vec4 outColor;
+                uniform sampler2D Texture;
+
+                void main() {
+
+                    outColor = texture(Texture, v_text, 0.0);
+
+                }
+                
+            '''
+        )
 
         self.prog = self.ctx.program(
             vertex_shader='''
@@ -84,30 +112,35 @@ class Histogram(Window):
         )
 
         self.histo = self.prog['histogram']
+        self.prog2['Texture'] = 0
 
-        # Show file dialog
-        root = tk.Tk()
-        root.withdraw()
-        path = filedialog.askopenfilename()
+        self.histo.value = self.countPix('data/pic10.png')
+        self.texture = self.load_texture_2d('pic10.png')
 
-        self.histo.value = self.countPix(path)
+        vertices = np.array([
+            1.0, 1.0,
+            0.5, 1.0,
+            0.5, 0.5,
+            1.0, 0.5,
+        ], dtype='f4')
 
-        
-
+        self.vbo2 = self.ctx.buffer(vertices)
+        self.vao2 = self.ctx.simple_vertex_array(self.prog2, self.vbo2, 'vert')
 
         self.vbo = self.ctx.buffer(self.initLines().astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
 
-        
-
 
     def render(self, time: float, frame_time: float):
+        self.texture.use(0)
 
         self.prog["resolution"] = self.wnd.buffer_size
         self.prog["width"] = 3.0
         back = (0.2, 0.2, 0.2)
         self.ctx.clear(back[0],back[1],back[2])
         self.vao.render(mode=moderngl.LINES)
+
+        self.vao2.render(mode=moderngl.TRIANGLE_FAN)
 
         self.render_ui()
 
@@ -138,18 +171,16 @@ class Histogram(Window):
         return hist.tolist()
 
 
-
     def render_ui(self):
         imgui.new_frame()
 
-
-        imgui.begin("Description - aaa", False)
-        imgui.text("Lorem ipsum")
+        imgui.begin("Description - Histogram", False)
+        imgui.text("Shows the histogram of a selected photo")
         imgui.end()
 
 
-        imgui.begin("Controls - aaa", False)
-        imgui.text("Press A/D to dolor sit amet")
+        imgui.begin("Controls - Histogram", False)
+        imgui.text("Press P to select a photo")
         imgui.end()
 
         imgui.render()
@@ -170,6 +201,18 @@ class Histogram(Window):
 
     def mouse_release_event(self, x: int, y: int, button: int):
         self.imgui.mouse_release_event(x, y, button)
+
+    # Events to interact with the visualisation
+    def key_event(self, key, action, modifiers):
+        if key == self.wnd.keys.P and action == self.wnd.keys.ACTION_PRESS:
+            # Show file dialog
+            root = tk.Tk()
+            root.withdraw()
+            path = filedialog.askopenfilename(filetypes=[("Picture files", ".png .jpg .jpeg .bmp")])
+            self.histo.value = self.countPix(path)
+
+            self.texture = self.load_texture_2d(path)
+                    
 
 if __name__ == '__main__':
     Histogram.run()

@@ -27,9 +27,10 @@ class Heatmap(Window):
                 out float gradient;
 
                 uniform mat4 Mvp;
+                uniform int size;
 
                 void main() {
-                    gl_PointSize = 5;
+                    gl_PointSize = size;
                     gradient = (vert.z+1)*0.5;
                     gl_Position = Mvp * vec4(vert, 1.0);
                 }
@@ -61,10 +62,12 @@ class Heatmap(Window):
         self.mvp = self.prog['Mvp']
         self.colorA = self.prog['colorA']
         self.colorB = self.prog['colorB']
+        self.size = self.prog['size']
 
         self.colorA.value = (0.1,1.0,0.0)
         self.colorB.value = (0.0,0.0,1.0)
         self.colorSelector = 0
+        self.size.value = 5
 
         self.vbo = self.ctx.buffer(self.initData(1).astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
@@ -129,6 +132,7 @@ class Heatmap(Window):
         imgui.begin("Controls - Functions", False)
         imgui.text("UP and DOWN to change colors")
         imgui.text("Press 1,2,3,4,5,6 to change function")
+        imgui.text("LEFT and RIGHT to change point size")
         imgui.text_colored("Warning:", 1,0,0)
         imgui.text("Depending on your machine, this may take a while")
         imgui.end()
@@ -178,6 +182,18 @@ class Heatmap(Window):
             self.colorSelect(True)
         if key == self.wnd.keys.DOWN and action == self.wnd.keys.ACTION_PRESS:
             self.colorSelect(False)
+        if key == self.wnd.keys.LEFT and action == self.wnd.keys.ACTION_PRESS:
+            self.sizeSelect(True)
+        if key == self.wnd.keys.RIGHT and action == self.wnd.keys.ACTION_PRESS:
+            self.sizeSelect(False)
+
+    def sizeSelect(self,up):
+        if up:
+            self.size.value = self.size.value + 1
+        else:
+            self.size.value = self.size.value - 1
+
+
 
     def colorSelect(self,up):
         if up:
