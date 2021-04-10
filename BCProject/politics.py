@@ -223,6 +223,8 @@ class Politics(Window):
 
     def render(self, time: float, frame_time: float):
 
+        self.fps = 1/frame_time
+
         self.control()
 
         self.vbo = self.ctx.buffer(grid(self.gridx, 0.8, 20, 10, self.gridy).astype('f4'))
@@ -242,6 +244,7 @@ class Politics(Window):
 
         imgui.begin("Description - Political parties", False)
         imgui.text("Visualisation of the number of mandates held by different political parties")
+        imgui.text("FPS: %.2f" % self.fps)
         imgui.text("Parties:")
         imgui.text_colored("ANO", 0 ,1 ,251/ 255)
         imgui.text_colored("ODS", 0,0,1)

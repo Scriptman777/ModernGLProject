@@ -51,6 +51,8 @@ class Name(Window):
 
     def render(self, time: float, frame_time: float):
 
+        self.fps = 1/frame_time
+
         back = (0.2, 0.2, 0.2)
         self.ctx.clear(back[0],back[1],back[2])
         self.vao.render(mode=moderngl.TRIANGLES)
@@ -63,6 +65,7 @@ class Name(Window):
 
         imgui.begin("Description - aaa", False)
         imgui.text("Lorem ipsum")
+        imgui.text("FPS: %.2f" % self.fps)
         imgui.end()
 
 

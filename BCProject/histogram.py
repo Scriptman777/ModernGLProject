@@ -132,6 +132,8 @@ class Histogram(Window):
 
 
     def render(self, time: float, frame_time: float):
+
+        self.fps = 1/frame_time
         self.texture.use(0)
 
         self.prog["resolution"] = self.wnd.buffer_size
@@ -176,6 +178,7 @@ class Histogram(Window):
 
         imgui.begin("Description - Histogram", False)
         imgui.text("Shows the histogram of a selected photo")
+        imgui.text("FPS: %.2f" % self.fps)
         imgui.end()
 
 

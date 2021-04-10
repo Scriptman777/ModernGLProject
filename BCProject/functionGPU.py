@@ -116,6 +116,9 @@ class Heatmap(Window):
 
     def render(self, time: float, frame_time: float):
 
+        self.fps = 1/frame_time
+        
+
         # Camera animation
         self.camera.move_forward()
         self.camera.rotate_left()
@@ -138,6 +141,7 @@ class Heatmap(Window):
         imgui.text("This is a visualisation of two variable functions")
         imgui.text("Points are colored based on their Z coordinate")
         imgui.text("Same visualisation could be used for heatmaps or simillar data")
+        imgui.text("FPS: %.2f" % self.fps)
         imgui.end()
 
 

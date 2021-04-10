@@ -143,6 +143,8 @@ class Water(Window):
 
     def render(self, time: float, frame_time: float):
 
+        self.fps = 1/frame_time
+
         back = (1.0, 1.0, 1.0)
         self.ctx.clear(back[0],back[1],back[2])
 
@@ -165,6 +167,7 @@ class Water(Window):
         imgui.text("in cubic meters per second")
         imgui.text("Source of data:")
         imgui.text("http://www.pla.cz/portal/sap/")
+        imgui.text("FPS: %.2f" % self.fps)
         imgui.end()
 
         imgui.begin("Controls - Water levels", False)
