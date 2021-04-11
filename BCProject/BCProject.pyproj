@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>cf880ab0-0fad-482a-a593-75cf30996042</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>logmap.py</StartupFile>
+    <StartupFile>cars.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,7 @@
     <Compile Include="logmap.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="cars.py" />
     <Compile Include="util\camera.py">
       <SubType>Code</SubType>
     </Compile>
