@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>cf880ab0-0fad-482a-a593-75cf30996042</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>functionGPU.py</StartupFile>
+    <StartupFile>logmap.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,10 +23,12 @@
   <ItemGroup>
     <Compile Include="functionGPU.py" />
     <Compile Include="histogram.py" />
+    <Compile Include="logmap.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="util\camera.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BCProject.py" />
     <Compile Include="functionCPU.py">
       <SubType>Code</SubType>
     </Compile>

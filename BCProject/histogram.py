@@ -214,7 +214,7 @@ class Histogram(Window):
             path = filedialog.askopenfilename(filetypes=[("Picture files", ".png .jpg .jpeg .bmp")])
             self.histo.value = self.countPix(path)
 
-            self.texture = self.load_texture_2d('warn.png')
+            self.texture = self.load_texture_2d(path)
                     
 
 if __name__ == '__main__':
