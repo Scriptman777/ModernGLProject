@@ -19,23 +19,31 @@ class Cars(Window):
                 uniform mat4 Mvp;
 
                 in vec3 in_position;
+                in vec3 in_normal;
 
+                out vec3 v_vert;
+                out vec3 v_norm;
 
                 void main() {
                     gl_Position = Mvp * vec4(in_position, 1.0);
+                    v_vert = in_position;
+                    v_norm = in_normal;
                 }
             ''',
             fragment_shader='''
                 #version 330
 
+                uniform vec3 Light;
+
+                in vec3 v_vert;
                 in vec3 v_norm;
-                in vec2 v_text;
 
                 out vec4 f_color;
 
                 void main() {
-
-                    f_color = vec4(0.0,0.0,1.0, 1.0);
+                    float lum = clamp(dot(normalize(Light - v_vert), normalize(v_norm)), 0.0, 1.0) * 0.8 + 0.2;
+                    vec3 color = vec3(0.0,0.0,1.0);
+                    f_color = vec4(color.xyz * lum, 1.0);
                 }
             ''',
         )
@@ -84,15 +92,18 @@ class Cars(Window):
         self.mvp = self.prog['Mvp']
         self.mvp_map = self.prog_map['Mvp']
 
+        self.light = self.prog['Light']
+
         self.vbo_map = self.ctx.buffer(vertices.astype('f4'))
         self.vao_map = self.ctx.simple_vertex_array(self.prog_map, self.vbo_map, 'vert')
 
-        self.obj = self.load_scene('car.obj')
+        self.obj = self.load_scene('car2.obj')
 
         self.vao = self.obj.root_nodes[0].mesh.vao.instance(self.prog)
 
-        self.movX = 0
-        self.movY = 0
+        self.movX = 200
+        self.movY = -200
+        self.movZ = 300
 
 
     def render(self, time, frame_time):
@@ -101,10 +112,12 @@ class Cars(Window):
 
         proj = Matrix44.perspective_projection(45.0, self.aspect_ratio, 0.1, 1000.0)
         lookat = Matrix44.look_at(
-            (200, -200, 300),
+            (self.movX, self.movY, self.movZ),
             (200.0, 200.0, 0.0),
             (0.0, 0.0, 1.0),
         )
+
+        self.light.value = (self.movX, self.movY, self.movZ)
 
 
         self.texture.use(0)
@@ -229,16 +242,12 @@ class Cars(Window):
         self.vao.render()
 
         #Russia
+        model_scale = Matrix44.from_scale(np.array([3,3,3]))
 
-        model = Matrix44.from_translation(np.array([300,190,0])) *  model_rot
+        model = Matrix44.from_translation(np.array([300,190,0])) *  model_rot * model_scale
         self.mvp.write((proj * lookat * model).astype('f4'))
         self.vao.render()
 
-        #AAA
-
-        model = Matrix44.from_translation(np.array([self.movX,self.movY,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
 
     def key_event(self, key, action, modifiers):
         if key == self.wnd.keys.RIGHT and action == self.wnd.keys.ACTION_PRESS:
@@ -249,7 +258,10 @@ class Cars(Window):
             self.movY += 10
         if key == self.wnd.keys.DOWN and action == self.wnd.keys.ACTION_PRESS:
             self.movY -= 10
-        print("X: " + str(self.movX) + "Y: " + str(self.movY))
+        if key == self.wnd.keys.W and action == self.wnd.keys.ACTION_PRESS:
+            self.movZ += 10
+        if key == self.wnd.keys.S and action == self.wnd.keys.ACTION_PRESS:
+            self.movZ -= 10
 
         
 
