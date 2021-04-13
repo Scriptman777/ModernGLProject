@@ -34,6 +34,7 @@ class Cars(Window):
                 #version 330
 
                 uniform vec3 Light;
+                uniform float gradient;
 
                 in vec3 v_vert;
                 in vec3 v_norm;
@@ -42,7 +43,7 @@ class Cars(Window):
 
                 void main() {
                     float lum = clamp(dot(normalize(Light - v_vert), normalize(v_norm)), 0.0, 1.0) * 0.8 + 0.2;
-                    vec3 color = vec3(0.0,0.0,1.0);
+                    vec3 color = mix(vec3(1.0,0.0,0.0),vec3(0.0,1.0,0.0),gradient);
                     f_color = vec4(color.xyz * lum, 1.0);
                 }
             ''',
@@ -93,6 +94,9 @@ class Cars(Window):
         self.mvp_map = self.prog_map['Mvp']
 
         self.light = self.prog['Light']
+        self.gradient = self.prog['gradient']
+
+        self.gradient.value = 0
 
         self.vbo_map = self.ctx.buffer(vertices.astype('f4'))
         self.vao_map = self.ctx.simple_vertex_array(self.prog_map, self.vbo_map, 'vert')
@@ -141,7 +145,6 @@ class Cars(Window):
 
         self.light.value = (self.movX, self.movY, self.movZ)
 
-
         self.texture.use(0)
         self.mvp_map.write((proj * lookat).astype('f4'))
         self.vao_map.render(moderngl.TRIANGLE_FAN)
@@ -149,6 +152,7 @@ class Cars(Window):
         model_rot = Matrix44.from_z_rotation(3.14/4) 
 
         for x in range(int(self.positions.size/3)):
+            #model_size = Matrix44.from_scale(np.array([2,2,2]))
             model = Matrix44.from_translation(np.array(self.positions[x])) *  model_rot
             self.mvp.write((proj * lookat * model).astype('f4'))
             self.vao.render()
@@ -167,6 +171,10 @@ class Cars(Window):
             self.movZ += 10
         if key == self.wnd.keys.S and action == self.wnd.keys.ACTION_PRESS:
             self.movZ -= 10
+        if key == self.wnd.keys.A and action == self.wnd.keys.ACTION_PRESS:
+            self.gradient.value += 0.1
+        if key == self.wnd.keys.D and action == self.wnd.keys.ACTION_PRESS:
+            self.gradient.value -= 0.1
 
         
 
