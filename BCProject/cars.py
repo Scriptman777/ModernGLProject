@@ -105,6 +105,28 @@ class Cars(Window):
         self.movY = -200
         self.movZ = 300
 
+        self.positions = np.array([
+            [195,105,0],
+            [160,135,0],
+            [250,260,0],
+            [150,100,0],
+            [185,135,0],
+            [200,60,0],
+            [165,150,0],
+            [105,45,0],
+            [130,50,0],
+            [205,260,0],
+            [135,155,0],
+            [205,125,0],
+            [225,100,0],
+            [225,150,0],
+            [250,90,0],
+            [220,118,0],
+            [202,92,0],
+            [220,80,0],
+            [280,120,0],
+            [300,190,0],])
+
 
     def render(self, time, frame_time):
         self.ctx.clear(0.2, 0.2, 0.2)
@@ -126,128 +148,11 @@ class Cars(Window):
 
         model_rot = Matrix44.from_z_rotation(3.14/4) 
 
-
-        #Austria
-
-        model = Matrix44.from_translation(np.array([195,105,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Belgium
-
-        model = Matrix44.from_translation(np.array([160,135,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Finland
-
-        model = Matrix44.from_translation(np.array([250,260,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #France
-
-        model = Matrix44.from_translation(np.array([150,100,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Germany
-
-        model = Matrix44.from_translation(np.array([185,135,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Italy
-
-        model = Matrix44.from_translation(np.array([200,60,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Netherlands
-
-        model = Matrix44.from_translation(np.array([165,150,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Portugal
-
-        model = Matrix44.from_translation(np.array([105,45,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Spain
-
-        model = Matrix44.from_translation(np.array([130,50,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Sweden
-
-        model = Matrix44.from_translation(np.array([205,260,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #UK
-
-        model = Matrix44.from_translation(np.array([135,155,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #CZ
-
-        model = Matrix44.from_translation(np.array([205,125,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Hungary
-
-        model = Matrix44.from_translation(np.array([225,100,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Poland
-
-        model = Matrix44.from_translation(np.array([225,150,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Romania
-
-        model = Matrix44.from_translation(np.array([250,90,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Slovakia
-
-        model = Matrix44.from_translation(np.array([220,118,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Slovenia
-
-        model = Matrix44.from_translation(np.array([202,92,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Serbia
-
-        model = Matrix44.from_translation(np.array([220,80,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Ukraine
-
-        model = Matrix44.from_translation(np.array([280,120,0])) *  model_rot
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
-        #Russia
-        model_scale = Matrix44.from_scale(np.array([3,3,3]))
-
-        model = Matrix44.from_translation(np.array([300,190,0])) *  model_rot * model_scale
-        self.mvp.write((proj * lookat * model).astype('f4'))
-        self.vao.render()
-
+        for x in range(int(self.positions.size/3)):
+            model = Matrix44.from_translation(np.array(self.positions[x])) *  model_rot
+            self.mvp.write((proj * lookat * model).astype('f4'))
+            self.vao.render()
+      
 
     def key_event(self, key, action, modifiers):
         if key == self.wnd.keys.RIGHT and action == self.wnd.keys.ACTION_PRESS:
