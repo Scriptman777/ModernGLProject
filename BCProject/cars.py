@@ -1,6 +1,7 @@
 from pyrr import Matrix44
 from UI.window import Window
 import numpy as np
+import csv
 
 import moderngl
 
@@ -78,7 +79,7 @@ class Cars(Window):
             ''',
         )
 
-
+        
 
         vertices = np.array([
             0.0, 0.0, 0.0,
@@ -108,6 +109,8 @@ class Cars(Window):
         self.movX = 200
         self.movY = -200
         self.movZ = 300
+
+        self.production = self.loadData()
 
         self.positions = np.array([
             [195,105,0],
@@ -152,8 +155,10 @@ class Cars(Window):
         model_rot = Matrix44.from_z_rotation(3.14/4) 
 
         for x in range(int(self.positions.size/3)):
-            #model_size = Matrix44.from_scale(np.array([2,2,2]))
-            model = Matrix44.from_translation(np.array(self.positions[x])) *  model_rot
+            size = 1 + self.production[x] * (2.5 - 1);
+            model_size = Matrix44.from_scale(np.array([size,size,size]))
+            self.gradient.value = self.production[x]
+            model = Matrix44.from_translation(np.array(self.positions[x])) *  model_rot * model_size
             self.mvp.write((proj * lookat * model).astype('f4'))
             self.vao.render()
       
@@ -175,6 +180,17 @@ class Cars(Window):
             self.gradient.value += 0.1
         if key == self.wnd.keys.D and action == self.wnd.keys.ACTION_PRESS:
             self.gradient.value -= 0.1
+
+    def loadData(self):
+        out = []
+        with open('data/cars2019.csv', newline='') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=';')
+            for row in spamreader:
+                out.append(int(row[1].replace(" ", "")))
+        maximum = max(out)
+        out = np.array(out) / maximum
+        return out
+        
 
         
 
