@@ -2,9 +2,10 @@ from pyrr import Matrix44
 from UI.window import Window
 import numpy as np
 import csv
+import imgui
 
 import moderngl
-
+from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
 class Cars(Window):
     title = "Car production"
@@ -12,6 +13,9 @@ class Cars(Window):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        imgui.create_context()
+        self.imgui = ModernglWindowRenderer(self.wnd)
 
         self.prog = self.ctx.program(
             vertex_shader='''
@@ -109,6 +113,7 @@ class Cars(Window):
         self.movX = 200
         self.movY = -200
         self.movZ = 300
+        self.fps = 0
 
         self.production = self.loadData()
 
@@ -134,10 +139,24 @@ class Cars(Window):
             [280,120,0],
             [300,190,0],])
 
+        self.states = {
+            self.wnd.keys.UP: False,   
+            self.wnd.keys.DOWN: False,  
+            self.wnd.keys.W: False,   
+            self.wnd.keys.S: False,  
+            self.wnd.keys.A: False,   
+            self.wnd.keys.D: False,  
+        }
+
 
     def render(self, time, frame_time):
         self.ctx.clear(0.2, 0.2, 0.2)
+
+        self.render_ui()
         self.ctx.enable(moderngl.DEPTH_TEST)
+
+        self.fps = 1/frame_time
+        self.control()
 
         proj = Matrix44.perspective_projection(45.0, self.aspect_ratio, 0.1, 1000.0)
         lookat = Matrix44.look_at(
@@ -161,25 +180,31 @@ class Cars(Window):
             model = Matrix44.from_translation(np.array(self.positions[x])) *  model_rot * model_size
             self.mvp.write((proj * lookat * model).astype('f4'))
             self.vao.render()
-      
+     
+    def control(self):
+        if self.states.get(self.wnd.keys.UP):
+            self.movZ += 1
+        if self.states.get(self.wnd.keys.DOWN):
+            if self.movZ > 1:
+                self.movZ -= 1
+        if self.states.get(self.wnd.keys.W):
+            if self.movY < 100:
+                self.movY += 1
+        if self.states.get(self.wnd.keys.S):
+            self.movY -= 1
+        if self.states.get(self.wnd.keys.A):
+            self.movX -= 1
+        if self.states.get(self.wnd.keys.D):
+            self.movX += 1
 
     def key_event(self, key, action, modifiers):
-        if key == self.wnd.keys.RIGHT and action == self.wnd.keys.ACTION_PRESS:
-            self.movX += 10
-        if key == self.wnd.keys.LEFT and action == self.wnd.keys.ACTION_PRESS:
-            self.movX -= 10
-        if key == self.wnd.keys.UP and action == self.wnd.keys.ACTION_PRESS:
-            self.movY += 10
-        if key == self.wnd.keys.DOWN and action == self.wnd.keys.ACTION_PRESS:
-            self.movY -= 10
-        if key == self.wnd.keys.W and action == self.wnd.keys.ACTION_PRESS:
-            self.movZ += 10
-        if key == self.wnd.keys.S and action == self.wnd.keys.ACTION_PRESS:
-            self.movZ -= 10
-        if key == self.wnd.keys.A and action == self.wnd.keys.ACTION_PRESS:
-            self.gradient.value += 0.1
-        if key == self.wnd.keys.D and action == self.wnd.keys.ACTION_PRESS:
-            self.gradient.value -= 0.1
+        if key not in self.states:
+            pass
+
+        if action == self.wnd.keys.ACTION_PRESS:
+            self.states[key] = True
+        else:
+            self.states[key] = False
 
     def loadData(self):
         out = []
@@ -190,6 +215,44 @@ class Cars(Window):
         maximum = max(out)
         out = np.array(out) / maximum
         return out
+
+    def render_ui(self):
+
+        imgui.new_frame()
+
+        imgui.begin("Description - Car Production", False)
+        imgui.text("This is a visualisation of car production")
+        imgui.text("in Europe for the year 2019")
+        imgui.text("Size and color of cars shows the relative")
+        imgui.text("production of vehicles in a country")
+        imgui.text("FPS: %.2f" % self.fps)
+        imgui.end()
+
+
+        imgui.begin("Controls - Car Production", False)
+        imgui.text("W and S to move forward and back")
+        imgui.text("A and D to move left and right")
+        imgui.text("UP and DOWN to change height")
+        imgui.end()
+
+        imgui.render()
+        self.imgui.render(imgui.get_draw_data())
+
+    # Events for imgui
+    def mouse_position_event(self, x, y, dx, dy):
+        self.imgui.mouse_position_event(x, y, dx, dy)
+
+    def mouse_drag_event(self, x, y, dx, dy):
+        self.imgui.mouse_drag_event(x, y, dx, dy)
+
+    def mouse_scroll_event(self, x_offset, y_offset):
+        self.imgui.mouse_scroll_event(x_offset, y_offset)
+
+    def mouse_press_event(self, x, y, button):
+        self.imgui.mouse_press_event(x, y, button)
+
+    def mouse_release_event(self, x: int, y: int, button: int):
+        self.imgui.mouse_release_event(x, y, button)
         
 
         
