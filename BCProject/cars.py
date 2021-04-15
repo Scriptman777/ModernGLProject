@@ -165,7 +165,7 @@ class Cars(Window):
             (0.0, 0.0, 1.0),
         )
 
-        self.light.value = (self.movX, self.movY, self.movZ)
+        self.light.value = (100,0, 200)
 
         self.texture.use(0)
         self.mvp_map.write((proj * lookat).astype('f4'))
