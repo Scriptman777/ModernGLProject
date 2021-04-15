@@ -106,7 +106,7 @@ class Cars(Window):
         self.vbo_map = self.ctx.buffer(vertices.astype('f4'))
         self.vao_map = self.ctx.simple_vertex_array(self.prog_map, self.vbo_map, 'vert')
 
-        self.obj = self.load_scene('car3.obj')
+        self.obj = self.load_scene('car3.obj',cache=True)
 
         self.vao = self.obj.root_nodes[0].mesh.vao.instance(self.prog)
 
