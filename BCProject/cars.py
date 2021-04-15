@@ -152,7 +152,7 @@ class Cars(Window):
     def render(self, time, frame_time):
         self.ctx.clear(0.2, 0.2, 0.2)
 
-        self.render_ui()
+
         self.ctx.enable(moderngl.DEPTH_TEST)
 
         self.fps = 1/frame_time
@@ -180,6 +180,8 @@ class Cars(Window):
             model = Matrix44.from_translation(np.array(self.positions[x])) *  model_rot * model_size
             self.mvp.write((proj * lookat * model).astype('f4'))
             self.vao.render()
+
+        self.render_ui()
      
     def control(self):
         if self.states.get(self.wnd.keys.UP):
