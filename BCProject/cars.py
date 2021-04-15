@@ -106,7 +106,7 @@ class Cars(Window):
         self.vbo_map = self.ctx.buffer(vertices.astype('f4'))
         self.vao_map = self.ctx.simple_vertex_array(self.prog_map, self.vbo_map, 'vert')
 
-        self.obj = self.load_scene('car2.obj')
+        self.obj = self.load_scene('car3.obj')
 
         self.vao = self.obj.root_nodes[0].mesh.vao.instance(self.prog)
 
@@ -171,7 +171,7 @@ class Cars(Window):
         self.mvp_map.write((proj * lookat).astype('f4'))
         self.vao_map.render(moderngl.TRIANGLE_FAN)
 
-        model_rot = Matrix44.from_z_rotation(3.14/4) 
+        model_rot = Matrix44.from_z_rotation(3.14/4) * Matrix44.from_x_rotation(-3.14/2)
 
         for x in range(int(self.positions.size/3)):
             size = 1 + self.production[x] * (2.5 - 1);
