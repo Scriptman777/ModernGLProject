@@ -1,4 +1,6 @@
 import numpy as np
+import tkinter as tk
+from tkinter import ttk
 import moderngl
 import imgui
 import scipy.io.wavfile as scipyio
@@ -21,21 +23,23 @@ class Music(Window):
             vertex_shader='''
                 #version 330
                 in vec2 vert;
-                uniform float dataPlot[1024];
+                uniform float dataPlot[1000];
+                uniform bool up;
                 
+                out float gradient;
 
                 void main() {
 
-                gl_PointSize = 3;
+                    gl_PointSize = 3;
 
-                if (true) {  //DONT FORGET THIS
-                    gl_Position = vec4(vert.x, dataPlot[gl_VertexID], 0.0, 1.0);
-                }
-                else {
-                    gl_Position = vec4(vert.x, dataPlot[gl_VertexID], 0.0, 1.0);
-                }
-                
-                    
+                    if (up) {
+                        gl_Position = vec4(vert.x, (dataPlot[gl_VertexID]+1)/2, 0.0, 1.0);
+                    }
+                    else {
+                        gl_Position = vec4(vert.x, (dataPlot[gl_VertexID]-1)/2, 0.0, 1.0);
+                    }
+                    gradient = dataPlot[gl_VertexID]*4;
+               
                 }
             ''',
             fragment_shader='''
@@ -43,50 +47,63 @@ class Music(Window):
 
                 uniform vec2 resolution;
 
+                in float gradient;
+
                 out vec4 outColor;
                 void main() {
 
-                    outColor = vec4(1.0,1.0,1.0,1.0); 
+                    vec3 color = mix(vec3(1.0,1.0,1.0),vec3(1.0,0.0,0.0),abs(gradient));
+                    outColor = vec4(color,1.0); 
                 }
             ''',
         )
 
         self.dataPlot = self.prog['dataPlot']
-        #self.up = self.prog['up']
+        self.up = self.prog['up']
+        self.up.value = True
 
 
-        self.rate, self.audio = scipyio.read('data/sweet_dreams.wav')
+        self.song = 1
+
+        if (self.song == 1):
+            path = 'data/sweet_dreams.wav'
+        if (self.song == 2):
+            path = 'data/omnissiah.wav'
+        if (self.song == 3):
+            path = 'data/never.wav'
+
+        self.rate, self.audio = scipyio.read(path)
 
 
         self.vbo = self.ctx.buffer(self.initLines().astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
 
-        filename = 'data/sweet_dreams.wav'
-        winsound.PlaySound(filename, winsound.SND_ASYNC | winsound.SND_ALIAS)
-
+        winsound.PlaySound(path, winsound.SND_ASYNC | winsound.SND_ALIAS)
 
     def render(self, time: float, frame_time: float):
         self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE)
-
-        onechannel = self.audio[:,0]
-
-        bigTime = int(time * 44100)
-        value = (onechannel[0+bigTime:1024+bigTime]/(32767*2)).tolist()
-        self.dataPlot.value = value
-
         self.fps = 1/frame_time
 
-        #self.up.value = true
         self.ctx.clear(0.2, 0.2, 0.2)
+
+        self.up.value = True
+        self.calculateSample(self.audio[:,0],time)
+        self.vao.render(mode=moderngl.POINTS)
+
+        self.up.value = False
+        self.calculateSample(self.audio[:,1],time)
         self.vao.render(mode=moderngl.POINTS)
 
         self.render_ui()
 
-
+    def calculateSample(self,channel,time):
+        bigTime = int(time * self.rate)
+        value = (channel[0+bigTime:1000+bigTime]/(32767*2)).tolist()
+        self.dataPlot.value = value
 
     def initLines(self):
-        u = np.linspace(-0.8, 0.8, 1024)
-        v = np.repeat(0.0,1024)
+        u = np.linspace(-0.8, 0.8, 1000)
+        v = np.repeat(0.0,1000)
 
         return np.array(list(zip(u,v))).flatten()
 
