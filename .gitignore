@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/BCProject/data/songs/apex.wav
+/BCProject/data/songs/doom.wav
+/BCProject/data/songs/void.wav

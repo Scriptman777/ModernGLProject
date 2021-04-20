@@ -61,24 +61,16 @@ class Music(Window):
         self.dataPlot = self.prog['dataPlot']
         self.up = self.prog['up']
         self.up.value = True
-
-
-        self.song = 1
-
-        if (self.song == 1):
-            path = 'data/sweet_dreams.wav'
-        if (self.song == 2):
-            path = 'data/omnissiah.wav'
-        if (self.song == 3):
-            path = 'data/never.wav'
-
-        self.rate, self.audio = scipyio.read(path)
+        self.audio = np.zeros((1000,2))
+        self.rate = 0
+        self.startTime = 0
+        self.songTime = 0
 
 
         self.vbo = self.ctx.buffer(self.initLines().astype('f4'))
         self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
 
-        winsound.PlaySound(path, winsound.SND_ASYNC | winsound.SND_ALIAS)
+        
 
     def render(self, time: float, frame_time: float):
         self.ctx.enable_only(moderngl.PROGRAM_POINT_SIZE)
@@ -86,15 +78,17 @@ class Music(Window):
 
         self.ctx.clear(0.2, 0.2, 0.2)
 
-        self.up.value = True
-        self.calculateSample(self.audio[:,0],time)
-        self.vao.render(mode=moderngl.POINTS)
+        if ((time-self.startTime)<(self.songTime)):
+            self.up.value = True
+            self.calculateSample(self.audio[:,0],time-self.startTime)
+            self.vao.render(mode=moderngl.POINTS)
 
-        self.up.value = False
-        self.calculateSample(self.audio[:,1],time)
-        self.vao.render(mode=moderngl.POINTS)
+            self.up.value = False
+            self.calculateSample(self.audio[:,1],time-self.startTime)
+            self.vao.render(mode=moderngl.POINTS)
+        
 
-        self.render_ui()
+        self.render_ui(time)
 
     def calculateSample(self,channel,time):
         bigTime = int(time * self.rate)
@@ -107,12 +101,27 @@ class Music(Window):
 
         return np.array(list(zip(u,v))).flatten()
 
-    def render_ui(self):
+    def playSong(self,index,time):
+        self.startTime = time
+        winsound.PlaySound(None, winsound.SND_PURGE)
+        if (index == 0):
+            path = 'data/songs/sweet_dreams.wav'
+        if (index == 1):
+            path = 'data/songs/omnissiah.wav'
+        if (index == 2):
+            path = 'data/songs/lift.wav'
+        self.rate, self.audio = scipyio.read(path)
+        winsound.PlaySound(path, winsound.SND_ASYNC | winsound.SND_ALIAS)
+        self.songTime = (len(self.audio)/self.rate)-2
+
+
+    def render_ui(self,time):
         imgui.new_frame()
 
 
         imgui.begin("Description - Music", False)
         imgui.text("Lorem ipsum")
+        comboOut = imgui.listbox("",-1,["Sweet Dreams","Children of the Omnissiah","We all lift together"])
         imgui.text("FPS: %.2f" % self.fps)
         imgui.end()
 
@@ -125,6 +134,8 @@ class Music(Window):
 
         imgui.render()
         self.imgui.render(imgui.get_draw_data())
+        if comboOut[0]:
+            self.playSong(comboOut[1],time)
 
     # Events for imgui
     def mouse_position_event(self, x, y, dx, dy):
