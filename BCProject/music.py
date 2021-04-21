@@ -120,17 +120,10 @@ class Music(Window):
 
 
         imgui.begin("Description - Music", False)
-        imgui.text("Lorem ipsum")
+        imgui.text("Pick a song to vizualize:")
         comboOut = imgui.listbox("",-1,["Sweet Dreams","Children of the Omnissiah","We all lift together"])
         imgui.text("FPS: %.2f" % self.fps)
         imgui.end()
-
-
-        imgui.begin("Controls - Music", False)
-        imgui.text("Press A/D to dolor sit amet")
-        imgui.end()
-
-
 
         imgui.render()
         self.imgui.render(imgui.get_draw_data())
