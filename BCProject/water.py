@@ -5,6 +5,8 @@ import math
 from UI.window import Window
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
+# PGRF2 - David Továrek 2021
+
 def gridInit(size, steps_x, steps_y):
     #Vertical Lines
     u = np.linspace(-size, size, steps_x)

@@ -7,6 +7,7 @@ from UI.window import Window
 from PIL import Image
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
+# PGRF2 - David Továrek 2021
 
 class Histogram(Window):
     title = "Histogram"
@@ -114,8 +115,8 @@ class Histogram(Window):
         self.histo = self.prog['histogram']
         self.prog2['Texture'] = 0
 
-        self.histo.value = self.countPix('data/pic10.png')
-        self.texture = self.load_texture_2d('pic10.png')
+        self.histo.value = self.countPix('data/i8.jpg')
+        self.texture = self.load_texture_2d('i8.jpg')
 
         vertices = np.array([
             1.0, 1.0,
@@ -214,7 +215,7 @@ class Histogram(Window):
             path = filedialog.askopenfilename(filetypes=[("Picture files", ".png .jpg .jpeg .bmp")])
             self.histo.value = self.countPix(path)
 
-            self.texture = self.load_texture_2d(path)
+            self.texture = self.load_texture_2d('warn.png')
                     
 
 if __name__ == '__main__':

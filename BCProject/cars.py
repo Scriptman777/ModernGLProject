@@ -7,6 +7,8 @@ import imgui
 import moderngl
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
+# PGRF2 - David Továrek 2021
+
 class Cars(Window):
     title = "Car production"
     gl_version = (3, 3)

@@ -5,6 +5,8 @@ import imgui
 from UI.window import Window
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
+# PGRF2 - David Továrek 2021
+
 class Name(Window):
     title = "Title"
     gl_version = (3, 3)

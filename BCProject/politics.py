@@ -4,6 +4,8 @@ import imgui
 from UI.window import Window
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
+# PGRF2 - David Továrek 2021
+
 def grid(size, vert, steps, lines, vertStep):
     u = np.linspace(-size, size, steps)
     v = np.repeat(vert,steps)

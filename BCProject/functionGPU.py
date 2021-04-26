@@ -7,6 +7,8 @@ from UI.window import Window
 from util.camera import Camera
 from moderngl_window.integrations.imgui import ModernglWindowRenderer
 
+# PGRF2 - David Továrek 2021
+
 class Heatmap(Window):
     title = "Functions/Heatmaps"
     gl_version = (3, 3)
